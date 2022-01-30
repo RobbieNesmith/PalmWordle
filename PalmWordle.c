@@ -13,8 +13,7 @@
 \*****************************************************************************/
 
 #include "PalmWordle.h"
-#include <System/SystemPublic.h>
-#include <UI/UIPublic.h>
+#include <PalmOS.h>
 #include "wordorder.h"
 
 UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
@@ -22,10 +21,19 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 	short err;
 	EventType e;
 	FormType *pfrm;
+	const Char *word;
+	UInt32 nowSeconds;
+	UInt32 nowDays;
+	UInt32 seedDays = 42904; // June 19 2021
+	UInt32 wordIndex;
 
 	if (cmd == sysAppLaunchCmdNormalLaunch) // Make sure only react to NormalLaunch, not Reset, Beam, Find, GoTo...
 	{
 		FrmGotoForm(Form1);
+		nowSeconds = TimGetSeconds();
+		nowDays = nowSeconds / 86400;
+		wordIndex = nowDays - seedDays;
+		word = wordOrder[wordIndex];
 
 		while (1)
 		{
@@ -50,7 +58,7 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 			case frmOpenEvent:
 				pfrm = FrmGetActiveForm();
 				FrmDrawForm(pfrm);
-				WinDrawChars(wordOrder[400], 5, 50, 50);
+				WinDrawChars(word, 5, 50, 50);
 				break;
 
 			case menuEvent:
