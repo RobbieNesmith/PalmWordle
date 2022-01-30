@@ -1,0 +1,50 @@
+/*****************************************************************************\
+*                                                                             *
+* Project       : Mobile development tutorial                                 *
+* Application   : Mobile version of "Hello World"                             *
+* Component     : Resources                                                   *
+* Author        : Eric Poncet (mobile.eric-poncet.com)                        *
+* Creation      : 06/18/2000                                                  *
+*                                                                             *
+*******************************************************************************
+*                                                                             *
+* History       :                                                             *
+*                                                                             *
+\*****************************************************************************/
+
+
+#include "PalmWordle.h"
+
+FORM ID Form1 AT (2 2 156 156)
+USABLE
+MODAL
+HELPID Help1
+BEGIN
+	TITLE "Hello World"
+	FORMBITMAP  AT (8 20) BITMAP 2005
+  	LABEL "Hello," ID 2000 AT (CENTER PREVBOTTOM+1) FONT 1
+	LABEL "Mobile World!" ID 2001 AT (CENTER PREVBOTTOM+1) FONT 2
+
+	LABEL "" ID 2002 AT (CENTER PREVBOTTOM+1) FONT 2
+	LABEL "" ID 2003 AT (CENTER PREVBOTTOM+1) FONT 2
+	LABEL "#:-)" ID 2004 AT (CENTER PREVBOTTOM+1) FONT 0
+
+	BUTTON "Ok" ID Ok AT (CENTER 140 AUTO AUTO)
+
+END
+
+STRING Help1 "This is the mobile version of the programming classics \"Hello World\".\n"\
+    "-----------\n" \
+	"Eric Poncet\n"\
+	"mobile.eric-poncet.com\n"\
+	"Freeware"
+
+ICON "PalmWordle.bmp"
+
+SMALLICON "PalmWordleSmall.bmp"
+
+BITMAP ID 2005 "PalmWordle.bmp" 
+
+VERSION 1 "1.0.0"
+
+LAUNCHERCATEGORY ID 1000 "Games"
