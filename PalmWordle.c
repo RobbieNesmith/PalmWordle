@@ -121,7 +121,7 @@ static Boolean ApplicationHandleEvent(EventPtr e)
 		frm = FrmInitForm(formId);
 		FrmSetActiveForm(frm);
 
-		if (formId == Form1)
+		if (formId == MainForm)
 		{
 			FrmSetEventHandler(frm, MainFormHandleEvent);
 		}
@@ -130,15 +130,25 @@ static Boolean ApplicationHandleEvent(EventPtr e)
 	return false;
 }
 
+static void AppInit()
+{
+	UInt32 nowSeconds;
+	UInt32 nowDays;
+	UInt32 seedDays = 42904; // June 19 2021
+	UInt32 wordIndex;
+
+	FrmGotoForm(MainForm);
+	nowSeconds = TimGetSeconds();
+	nowDays = nowSeconds / 86400;
+	wordIndex = nowDays - seedDays;
+	word = wordOrder[wordIndex];
+}
+
 UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 {
 	short err;
 	EventType e;
 	FormType *pfrm;
-	UInt32 nowSeconds;
-	UInt32 nowDays;
-	UInt32 seedDays = 42904; // June 19 2021
-	UInt32 wordIndex;
 	int row, col;
 	RectangleType rect;
 	rect.extent.x = 20;
@@ -146,11 +156,7 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 
 	if (cmd == sysAppLaunchCmdNormalLaunch) // Make sure only react to NormalLaunch, not Reset, Beam, Find, GoTo...
 	{
-		FrmGotoForm(Form1);
-		nowSeconds = TimGetSeconds();
-		nowDays = nowSeconds / 86400;
-		wordIndex = nowDays - seedDays;
-		word = wordOrder[wordIndex];
+		AppInit();
 
 		while (1)
 		{
@@ -167,6 +173,15 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 			switch (e.eType)
 			{
 			case ctlSelectEvent:
+				switch (e.data.ctlSelect.controlID)
+				{
+				case OkButton:
+					FrmGotoForm(MainForm);
+					break;
+				case QuitButton:
+					goto _quit;
+					break;
+				}
 				goto _default;
 				break;
 
@@ -177,7 +192,7 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 			case frmOpenEvent:
 				pfrm = FrmGetActiveForm();
 				FrmDrawForm(pfrm);
-				if (pfrm->formId == Form1)
+				if (e.data.frmOpen.formID == MainForm)
 				{
 					for (row = 0; row < 6; row++)
 					{
@@ -192,6 +207,18 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 				break;
 
 			case menuEvent:
+				switch (e.data.menu.itemID)
+				{
+				case Quit:
+					goto _quit;
+					break;
+				case About:
+					FrmGotoForm(AboutForm);
+					break;
+				case HowTo:
+					FrmGotoForm(HowToForm);
+					break;
+				}
 				break;
 
 			case appStopEvent:

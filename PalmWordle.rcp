@@ -15,18 +15,63 @@
 
 #include "PalmWordle.h"
 
-FORM ID Form1 AT (0 0 160 160)
+FORM ID MainForm AT (0 0 160 160)
 USABLE
-HELPID Help1
+MENUID WordleMenu
 BEGIN
 	TITLE "Wordle"
 END
 
-STRING Help1 "This is the mobile version of the programming classics \"Hello World\".\n"\
-    "-----------\n" \
-	"Eric Poncet\n"\
-	"mobile.eric-poncet.com\n"\
-	"Freeware"
+FORM ID AboutForm AT (0 0 160 160)
+USABLE
+MENUID WordleMenu
+BEGIN
+	TITLE "Wordle"
+	LABEL "Wordle for Palm OS" AUTOID AT (CENTER 16) FONT 2
+	LABEL "By: Bobberto1995" AUTOID AT (CENTER PREVBOTTOM + 4) FONT 0
+	BUTTON "OK" ID OkButton AT (CENTER 120 AUTO AUTO)
+END
+
+FORM ID HowToForm AT (0 0 160 160)
+USABLE
+MENUID WordleMenu
+BEGIN
+	TITLE "Wordle"
+	LABEL "How to play Wordle" AUTOID AT (CENTER 16) FONT 2
+	LABEL "[Useful information here]" AUTOID AT (CENTER PREVBOTTOM + 4) FONT 0
+	BUTTON "OK" ID OkButton AT (CENTER 120 AUTO AUTO)
+END
+
+FORM ID WinForm AT (0 0 160 160)
+USABLE
+BEGIN
+	TITLE "Wordle"
+	LABEL "You won!" AUTOID AT (CENTER 16) FONT 2
+	LABEL "Congratulations!" AUTOID AT (CENTER PREVBOTTOM + 4) FONT 0
+	BUTTON "Quit" ID QuitButton AT (CENTER 120 AUTO AUTO)
+END
+
+FORM ID LoseForm AT (0 0 160 160)
+USABLE
+BEGIN
+	TITLE "Wordle"
+	LABEL "You lost!" AUTOID AT (CENTER 16) FONT 2
+	LABEL "Better luck next time" AUTOID AT (CENTER PREVBOTTOM + 4) FONT 0
+	BUTTON "Quit" ID QuitButton AT (CENTER 120 AUTO AUTO)
+END
+
+MENU ID WordleMenu
+BEGIN
+  PULLDOWN "Game"
+  BEGIN
+    MENUITEM "Quit..." ID Quit "Q"
+  END
+  PULLDOWN "Help"
+  BEGIN
+    MENUITEM "About" ID About "A"
+	MENUITEM "How to Play" ID HowTo "H"
+  END
+END
 
 ICON "PalmWordle.bmp"
 
