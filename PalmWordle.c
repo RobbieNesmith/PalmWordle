@@ -16,16 +16,119 @@
 #include <PalmOS.h>
 #include "wordorder.h"
 
+#define thickFrame 2
+
 const Char *word;
 int guessRow = 0;
 int guessCol = 0;
 Char guess[6][5];
 
+static Boolean CheckAndRenderGridSquare(Char c, int col, int x, int y)
+{
+	Boolean correct = true;
+	RGBColorType rgb;
+	RectangleType rect;
+	int i;
+	rect.topLeft.x = x;
+	rect.topLeft.y = y;
+	rect.extent.x = 20;
+	rect.extent.y = 20;
+
+	if (guess[guessRow][col] == word[col])
+	{
+		rgb.r = 0;
+		rgb.g = 127;
+		rgb.b = 0;
+	}
+	else
+	{
+		correct = false;
+		rgb.r = 200;
+		rgb.g = 200;
+		rgb.b = 200;
+		for (i = 0; i < 5; i++)
+		{
+			if (word[i] == guess[guessRow][col])
+			{
+				rgb.r = 255;
+				rgb.g = 255;
+				rgb.b = 0;
+			}
+		}
+	}
+	WinSetForeColorRGB(&rgb, NULL);
+	WinDrawRectangleFrame(thickFrame, &rect);
+	rgb.r = 0;
+	rgb.g = 0;
+	rgb.b = 0;
+	WinSetForeColorRGB(&rgb, NULL);
+	WinDrawChar(c - 0x20, x + 7, y + 2);
+	return correct;
+}
+
+static void RenderBoard()
+{
+	int row, col;
+	RectangleType rect;
+	rect.extent.x = 20;
+	rect.extent.y = 20;
+
+	for (row = 0; row < 6; row++)
+	{
+		for (col = 0; col < 5; col++)
+		{
+			rect.topLeft.x = col * 24 + 20;
+			rect.topLeft.y = row * 24 + 18;
+
+			if (row < guessRow)
+			{
+				CheckAndRenderGridSquare(guess[row][col], col, col * 24 + 20, row * 24 + 18);
+			}
+			else
+			{
+				WinDrawRectangleFrame(simpleFrame, &rect);
+				if (row == guessRow && col < guessCol)
+				{
+					WinDrawChar(guess[row][col] - 0x20, col * 24 + 27, row * 24 + 20);
+				}
+			}
+		}
+	}
+}
+
+static void RenderFinalWord()
+{
+	int i;
+	for (i = 0; i < 5; i++)
+	{
+		CheckAndRenderGridSquare(guess[guessRow][i], i, i * 24 + 20, 90);
+	}
+}
+
+static Boolean WinFormHandleEvent(EventPtr e)
+{
+	if (e->eType == frmOpenEvent)
+	{
+		RenderFinalWord();
+		return true;
+	}
+	return false;
+}
+
+static Boolean LoseFormHandleEvent(EventPtr e)
+{
+	if (e->eType == frmOpenEvent)
+	{
+		RenderFinalWord();
+		return true;
+	}
+	return false;
+}
+
 static Boolean MainFormHandleEvent(EventPtr e)
 {
-	int i, j;
+	int i;
 	Boolean handled = false;
-	RGBColorType rgb;
 	RectangleType rect;
 	Boolean won;
 	rect.extent.x = 20;
@@ -51,40 +154,16 @@ static Boolean MainFormHandleEvent(EventPtr e)
 			won = true;
 			for (i = 0; i < 5; i++)
 			{
-				if (guess[guessRow][i] == word[i])
-				{
-					rgb.r = 0;
-					rgb.g = 127;
-					rgb.b = 0;
-				}
-				else
-				{
-					won = false;
-					rgb.r = 200;
-					rgb.g = 200;
-					rgb.b = 200;
-					for (j = 0; j < 5; j++)
-					{
-						if (word[j] == guess[guessRow][i])
-						{
-							rgb.r = 255;
-							rgb.g = 255;
-							rgb.b = 0;
-						}
-					}
-				}
-				rect.topLeft.x = i * 24 + 20;
-				rect.topLeft.y = guessRow * 24 + 18;
-				WinSetForeColorRGB(&rgb, NULL);
-				WinDrawRectangleFrame(0x0002, &rect);
+				won &= CheckAndRenderGridSquare(guess[guessRow][i], i, i * 24 + 20, guessRow * 24 + 18);
 			}
 
 			if (won)
 			{
 				FrmGotoForm(WinForm);
+				return true;
 			}
 
-			if (guessRow < 5)
+			if (guessRow < 5 && !won)
 			{
 				guessRow++;
 				guessCol = 0;
@@ -92,11 +171,8 @@ static Boolean MainFormHandleEvent(EventPtr e)
 			else
 			{
 				FrmGotoForm(LoseForm);
+				return true;
 			}
-			rgb.r = 0;
-			rgb.g = 0;
-			rgb.b = 0;
-			WinSetForeColorRGB(&rgb, NULL);
 			handled = true;
 		}
 		else if (((e->data.keyDown.chr >= chrCapital_A && e->data.keyDown.chr <= chrCapital_Z) ||
@@ -117,6 +193,10 @@ static Boolean MainFormHandleEvent(EventPtr e)
 			handled = true;
 		}
 		break;
+	case frmOpenEvent:
+		RenderBoard();
+		handled = true;
+		break;
 	default:
 		//do nothing
 	}
@@ -134,9 +214,17 @@ static Boolean ApplicationHandleEvent(EventPtr e)
 		frm = FrmInitForm(formId);
 		FrmSetActiveForm(frm);
 
-		if (formId == MainForm)
+		switch (formId)
 		{
+		case MainForm:
 			FrmSetEventHandler(frm, MainFormHandleEvent);
+			break;
+		case WinForm:
+			FrmSetEventHandler(frm, WinFormHandleEvent);
+			break;
+		case LoseForm:
+			FrmSetEventHandler(frm, LoseFormHandleEvent);
+			break;
 		}
 		return true;
 	}
@@ -162,10 +250,6 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 	short err;
 	EventType e;
 	FormType *pfrm;
-	int row, col;
-	RectangleType rect;
-	rect.extent.x = 20;
-	rect.extent.y = 20;
 
 	if (cmd == sysAppLaunchCmdNormalLaunch) // Make sure only react to NormalLaunch, not Reset, Beam, Find, GoTo...
 	{
@@ -205,18 +289,7 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 			case frmOpenEvent:
 				pfrm = FrmGetActiveForm();
 				FrmDrawForm(pfrm);
-				if (e.data.frmOpen.formID == MainForm)
-				{
-					for (row = 0; row < 6; row++)
-					{
-						for (col = 0; col < 5; col++)
-						{
-							rect.topLeft.x = col * 24 + 20;
-							rect.topLeft.y = row * 24 + 18;
-							WinDrawRectangleFrame(simpleFrame, &rect);
-						}
-					}
-				}
+				goto _default;
 				break;
 
 			case menuEvent:
