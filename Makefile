@@ -12,7 +12,7 @@ PalmWordle: PalmWordle.o
 PalmWordle.o: PalmWordle.c PalmWordle.h
 	$(CC) $(CFLAGS) -c PalmWordle.c
 
-bin.stamp: PalmWordle.rcp PalmWordle.h PalmWordle.bmp
+bin.stamp: PalmWordle.rcp PalmWordle.h *.bmp
 	pilrc PalmWordle.rcp
 
 clean:

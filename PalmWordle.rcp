@@ -79,11 +79,15 @@ BEGIN
   END
 END
 
-ICON "PalmWordle.bmp"
+ICONFAMILYEX
+BEGIN
+	BITMAP "PalmWordleMono.bmp" BPP 1
+	BITMAP "PalmWordleGray4.bmp" BPP 2
+	BITMAP "PalmWordleColor.bmp" BPP 8 TRANSPARENCY 255 0 0
+	BITMAP "PalmWordleHires.bmp" BPP 8 DENSITY 2 TRANSPARENCY 255 0 0
+END
 
 SMALLICON "PalmWordleSmall.bmp"
-
-BITMAP ID 2005 "PalmWordle.bmp" 
 
 VERSION 1 "1.0.0"
 
