@@ -34,7 +34,7 @@ static Boolean CheckAndRenderGridSquare(Char c, int col, int x, int y)
 	rect.extent.x = 20;
 	rect.extent.y = 20;
 
-	if (guess[guessRow][col] == word[col])
+	if (c == word[col])
 	{
 		rgb.r = 0;
 		rgb.g = 127;
@@ -48,7 +48,7 @@ static Boolean CheckAndRenderGridSquare(Char c, int col, int x, int y)
 		rgb.b = 200;
 		for (i = 0; i < 5; i++)
 		{
-			if (word[i] == guess[guessRow][col])
+			if (word[i] == c)
 			{
 				rgb.r = 255;
 				rgb.g = 255;
