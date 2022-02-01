@@ -29,6 +29,12 @@ BEGIN
 	TITLE "Wordle"
 	LABEL "Wordle for Palm OS" AUTOID AT (CENTER 24) FONT 2
 	LABEL "By: Bobberto1995" AUTOID AT (CENTER PREVBOTTOM + 4) FONT 0
+	LABEL "Source code and binaries on Github:" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
+	LABEL "https://github.com/" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
+	LABEL "RobbieNesmith/PalmWordle" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
+	LABEL "Based on Wordle by Josh Wardle" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
+	LABEL "https://www.powerlanguage.co.uk/" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
+	LABEL "wordle/" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
 	BUTTON "OK" ID OkButton AT (CENTER 140 AUTO AUTO)
 END
 
