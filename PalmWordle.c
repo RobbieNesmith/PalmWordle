@@ -27,6 +27,7 @@ static Boolean MainFormHandleEvent(EventPtr e)
 	Boolean handled = false;
 	RGBColorType rgb;
 	RectangleType rect;
+	Boolean won;
 	rect.extent.x = 20;
 	rect.extent.y = 20;
 
@@ -47,6 +48,7 @@ static Boolean MainFormHandleEvent(EventPtr e)
 		else if (e->data.keyDown.chr == chrLineFeed &&
 				 guessCol == 5)
 		{
+			won = true;
 			for (i = 0; i < 5; i++)
 			{
 				if (guess[guessRow][i] == word[i])
@@ -57,6 +59,7 @@ static Boolean MainFormHandleEvent(EventPtr e)
 				}
 				else
 				{
+					won = false;
 					rgb.r = 200;
 					rgb.g = 200;
 					rgb.b = 200;
@@ -75,10 +78,20 @@ static Boolean MainFormHandleEvent(EventPtr e)
 				WinSetForeColorRGB(&rgb, NULL);
 				WinDrawRectangleFrame(0x0002, &rect);
 			}
-			if (guessRow < 6)
+
+			if (won)
+			{
+				FrmGotoForm(WinForm);
+			}
+
+			if (guessRow < 5)
 			{
 				guessRow++;
 				guessCol = 0;
+			}
+			else
+			{
+				FrmGotoForm(LoseForm);
 			}
 			rgb.r = 0;
 			rgb.g = 0;
