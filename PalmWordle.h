@@ -11,3 +11,5 @@
 #define Quit 2011
 #define About 2021
 #define HowTo 2022
+
+#define CorrectWordLabel 3000

@@ -96,12 +96,21 @@ static void RenderBoard()
 	}
 }
 
+static void RenderCorrectWord()
+{
+	int i;
+	for (i = 0; i < 5; i++)
+	{
+		CheckAndRenderGridSquare(word[i], i, i * 24 + 20, 70);
+	}
+}
+
 static void RenderFinalWord()
 {
 	int i;
 	for (i = 0; i < 5; i++)
 	{
-		CheckAndRenderGridSquare(guess[guessRow][i], i, i * 24 + 20, 90);
+		CheckAndRenderGridSquare(guess[guessRow][i], i, i * 24 + 20, 110);
 	}
 }
 
@@ -109,7 +118,7 @@ static Boolean WinFormHandleEvent(EventPtr e)
 {
 	if (e->eType == frmOpenEvent)
 	{
-		RenderFinalWord();
+		RenderCorrectWord();
 		return true;
 	}
 	return false;
@@ -119,6 +128,7 @@ static Boolean LoseFormHandleEvent(EventPtr e)
 {
 	if (e->eType == frmOpenEvent)
 	{
+		RenderCorrectWord();
 		RenderFinalWord();
 		return true;
 	}
