@@ -4,7 +4,7 @@ CFLAGS = -O2 -Wall
 all: PWordle.prc
 
 PWordle.prc: PalmWordle bin.stamp
-	build-prc PWordle.prc "Palm Wordle" TuHe PalmWordle *.bin
+	build-prc PWordle.prc "Palm Wordle" WRDL PalmWordle *.bin
 
 PalmWordle: PalmWordle.o
 	$(CC) $(CFLAGS) -o PalmWordle PalmWordle.o
