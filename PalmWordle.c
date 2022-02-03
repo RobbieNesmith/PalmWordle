@@ -26,42 +26,86 @@ Char guess[6][5];
 static Boolean CheckAndRenderGridSquare(Char c, int col, int x, int y)
 {
 	Boolean correct = true;
+	Boolean inWord = true;
 	RGBColorType rgb;
 	RectangleType rect;
 	int i;
+	Boolean enableColor;
+	FrameType frame = thickFrame;
 	rect.topLeft.x = x;
 	rect.topLeft.y = y;
 	rect.extent.x = 20;
 	rect.extent.y = 20;
 
-	if (c == word[col])
-	{
-		rgb.r = 0;
-		rgb.g = 127;
-		rgb.b = 0;
-	}
-	else
+	WinPushDrawState();
+	WinScreenMode(winScreenModeGet, NULL, NULL, NULL, &enableColor);
+
+	if (c != word[col])
 	{
 		correct = false;
-		rgb.r = 200;
-		rgb.g = 200;
-		rgb.b = 200;
+		inWord = false;
 		for (i = 0; i < 5; i++)
 		{
 			if (word[i] == c)
 			{
-				rgb.r = 255;
-				rgb.g = 255;
-				rgb.b = 0;
+				inWord = true;
 			}
 		}
 	}
-	WinSetForeColorRGB(&rgb, NULL);
-	WinDrawRectangleFrame(thickFrame, &rect);
-	rgb.r = 0;
-	rgb.g = 0;
-	rgb.b = 0;
-	WinSetForeColorRGB(&rgb, NULL);
+
+	if (correct)
+	{
+		if (enableColor)
+		{
+			rgb.r = 0;
+			rgb.g = 127;
+			rgb.b = 0;
+		}
+	}
+	else if (inWord)
+	{
+		if (enableColor)
+		{
+			rgb.r = 255;
+			rgb.g = 255;
+			rgb.b = 0;
+		}
+		else
+		{
+			frame = roundFrame;
+		}
+	}
+	else
+	{
+		if (enableColor)
+		{
+			rgb.r = 200;
+			rgb.g = 200;
+			rgb.b = 200;
+		}
+	}
+
+	if (enableColor)
+	{
+		WinSetForeColorRGB(&rgb, NULL);
+	}
+
+	if (enableColor)
+	{
+		WinDrawRectangleFrame(frame, &rect);
+	}
+	else
+	{
+		if (!correct)
+		{
+			WinEraseRectangleFrame(simpleFrame, &rect);
+		}
+		if (correct || inWord)
+		{
+			WinDrawRectangleFrame(frame, &rect);
+		}
+	}
+	WinPopDrawState();
 	WinDrawChar(c - 0x20, x + 7, y + 2);
 	return correct;
 }
