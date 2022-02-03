@@ -1,4 +1,6 @@
-const Char wordOrder[2315][5] = {
+#define NUM_WORDS 2315
+
+const Char wordOrder[NUM_WORDS][5] = {
     "cigar",
     "rebut",
     "sissy",

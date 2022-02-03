@@ -252,6 +252,11 @@ static void AppInit()
 	nowSeconds = TimGetSeconds();
 	nowDays = nowSeconds / 86400;
 	wordIndex = nowDays - seedDays;
+	wordIndex %= NUM_WORDS;
+	if (wordIndex < 0)
+	{
+		wordIndex += NUM_WORDS;
+	}
 	word = wordOrder[wordIndex];
 }
 
