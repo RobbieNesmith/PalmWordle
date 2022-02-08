@@ -17,6 +17,10 @@
 #include "wordorder.h"
 
 #define thickFrame 2
+#define PALETTE_OFFSET 127
+#define CORRECT_COLOR PALETTE_OFFSET
+#define INWORD_COLOR PALETTE_OFFSET + 1
+#define WRONG_COLOR PALETTE_OFFSET + 2
 
 const Char *word;
 int guessRow = 0;
@@ -27,7 +31,7 @@ static Boolean CheckAndRenderGridSquare(Char c, int col, int x, int y)
 {
 	Boolean correct = true;
 	Boolean inWord = true;
-	RGBColorType rgb;
+	IndexedColorType color;
 	RectangleType rect;
 	int i;
 	Boolean enableColor;
@@ -55,43 +59,24 @@ static Boolean CheckAndRenderGridSquare(Char c, int col, int x, int y)
 
 	if (correct)
 	{
-		if (enableColor)
-		{
-			rgb.r = 0;
-			rgb.g = 127;
-			rgb.b = 0;
-		}
+		color = CORRECT_COLOR;
 	}
 	else if (inWord)
 	{
-		if (enableColor)
-		{
-			rgb.r = 255;
-			rgb.g = 255;
-			rgb.b = 0;
-		}
-		else
+		color = INWORD_COLOR;
+		if (!enableColor)
 		{
 			frame = roundFrame;
 		}
 	}
 	else
 	{
-		if (enableColor)
-		{
-			rgb.r = 200;
-			rgb.g = 200;
-			rgb.b = 200;
-		}
+		color = WRONG_COLOR;
 	}
 
 	if (enableColor)
 	{
-		WinSetForeColorRGB(&rgb, NULL);
-	}
-
-	if (enableColor)
-	{
+		WinSetForeColor(color);
 		WinDrawRectangleFrame(frame, &rect);
 	}
 	else
@@ -252,7 +237,7 @@ static Boolean MainFormHandleEvent(EventPtr e)
 		handled = true;
 		break;
 	default:
-		//do nothing
+		// do nothing
 	}
 	return handled;
 }
@@ -291,6 +276,21 @@ static void AppInit()
 	UInt32 nowDays;
 	UInt32 seedDays = 42904; // June 19 2021
 	UInt32 wordIndex;
+	RGBColorType table[3];
+
+	table[0].r = 0;
+	table[0].g = 127;
+	table[0].b = 0;
+
+	table[1].r = 255;
+	table[1].g = 255;
+	table[1].b = 0;
+
+	table[2].r = 200;
+	table[2].g = 200;
+	table[2].b = 200;
+
+	WinPalette(winPaletteSet, PALETTE_OFFSET, 3, table);
 
 	FrmGotoForm(MainForm);
 	nowSeconds = TimGetSeconds();
