@@ -1,18 +1,3 @@
-/*****************************************************************************\
-*                                                                             *
-* Project       : Mobile development tutorial                                 *
-* Application   : Mobile version of "Hello World"                             *
-* Component     : Resources                                                   *
-* Author        : Eric Poncet (mobile.eric-poncet.com)                        *
-* Creation      : 06/18/2000                                                  *
-*                                                                             *
-*******************************************************************************
-*                                                                             *
-* History       :                                                             *
-*                                                                             *
-\*****************************************************************************/
-
-
 #include "PalmWordle.h"
 
 FORM ID MainForm AT (0 0 160 160)

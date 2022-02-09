@@ -1,17 +1,3 @@
-/*****************************************************************************\
-*                                                                             *
-* Project       : Mobile development tutorial                                 *
-* Application   : Mobile version of "Hello World"                             *
-* Component     : Main                                                        *
-* Author        : Eric Poncet (mobile.eric-poncet.com)                        *
-* Creation      : 06/18/2000                                                  *
-*                                                                             *
-*******************************************************************************
-*                                                                             *
-* History       :                                                             *
-*                                                                             *
-\*****************************************************************************/
-
 #include "PalmWordle.h"
 #include <PalmOS.h>
 #include "wordorder.h"
