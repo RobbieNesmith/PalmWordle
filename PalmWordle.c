@@ -26,73 +26,106 @@ const Char *word;
 int guessRow = 0;
 int guessCol = 0;
 Char guess[6][5];
+Boolean enableColor;
 
-static Boolean CheckAndRenderGridSquare(Char c, int col, int x, int y)
+static Boolean CheckAndRenderWord(const Char c[5], int x, int y)
 {
-	Boolean correct = true;
-	Boolean inWord = true;
-	IndexedColorType color;
+	Boolean won = true;
+	int i, j, k;
+	int wordInstances, guessInstances;
+	int timesBeaten;
+	IndexedColorType colors[5] = {
+		CORRECT_COLOR,
+		CORRECT_COLOR,
+		CORRECT_COLOR,
+		CORRECT_COLOR,
+		CORRECT_COLOR};
 	RectangleType rect;
-	int i;
-	Boolean enableColor;
-	FrameType frame = thickFrame;
 	rect.topLeft.x = x;
 	rect.topLeft.y = y;
 	rect.extent.x = 20;
 	rect.extent.y = 20;
 
-	WinPushDrawState();
-	WinScreenMode(winScreenModeGet, NULL, NULL, NULL, &enableColor);
-
-	if (c != word[col])
+	for (i = 0; i < 5; i++)
 	{
-		correct = false;
-		inWord = false;
-		for (i = 0; i < 5; i++)
+		if (word[i] != c[i])
 		{
-			if (word[i] == c)
+			colors[i] = WRONG_COLOR;
+			won = false;
+			for (j = 0; j < 5; j++)
 			{
-				inWord = true;
+				if (word[j] == c[i])
+				{
+					wordInstances = 0;
+					guessInstances = 0;
+					for (k = 0; k < 5; k++)
+					{
+						if (word[k] == c[i])
+						{
+							wordInstances++;
+						}
+						if (c[k] == c[i])
+						{
+							guessInstances++;
+						}
+					}
+					colors[i] = INWORD_COLOR;
+					if (wordInstances < guessInstances)
+					{
+						timesBeaten = 0;
+						for (k = 0; k < 5; k++)
+						{
+							if (k < i)
+							{
+								if (c[k] == c[i] && colors[k] < WRONG_COLOR)
+								{
+									timesBeaten++;
+								}
+							}
+							else if (k > i)
+							{
+								if (c[k] == c[i] && c[k] == word[k])
+								{
+									timesBeaten++;
+								}
+							}
+						}
+						if (timesBeaten >= wordInstances)
+						{
+							colors[i] = WRONG_COLOR;
+						}
+					}
+				}
 			}
 		}
+
+		rect.topLeft.x = x + i * 24;
+
+		if (enableColor)
+		{
+			WinSetForeColor(colors[i]);
+			WinDrawRectangleFrame(thickFrame, &rect);
+		}
+		else
+		{
+			if (colors[i] != CORRECT_COLOR)
+			{
+				WinEraseRectangleFrame(simpleFrame, &rect);
+			}
+			if (colors[i] == CORRECT_COLOR)
+			{
+				WinDrawRectangleFrame(thickFrame, &rect);
+			}
+			else if (colors[i] == INWORD_COLOR)
+			{
+				WinDrawRectangleFrame(roundFrame, &rect);
+			}
+		}
+		WinPopDrawState();
+		WinDrawChar(c[i] - 0x20, x + i * 24 + 7, y + 2);
 	}
 
-	if (correct)
-	{
-		color = CORRECT_COLOR;
-	}
-	else if (inWord)
-	{
-		color = INWORD_COLOR;
-		if (!enableColor)
-		{
-			frame = roundFrame;
-		}
-	}
-	else
-	{
-		color = WRONG_COLOR;
-	}
-
-	if (enableColor)
-	{
-		WinSetForeColor(color);
-		WinDrawRectangleFrame(frame, &rect);
-	}
-	else
-	{
-		if (!correct)
-		{
-			WinEraseRectangleFrame(simpleFrame, &rect);
-		}
-		if (correct || inWord)
-		{
-			WinDrawRectangleFrame(frame, &rect);
-		}
-	}
-	WinPopDrawState();
-	WinDrawChar(c - 0x20, x + 7, y + 2);
-	return correct;
+	return won;
 }
 
 static void RenderBoard()
@@ -104,17 +137,16 @@ static void RenderBoard()
 
 	for (row = 0; row < 6; row++)
 	{
-		for (col = 0; col < 5; col++)
+		if (row < guessRow)
 		{
-			rect.topLeft.x = col * 24 + 20;
-			rect.topLeft.y = row * 24 + 18;
-
-			if (row < guessRow)
+			CheckAndRenderWord(guess[row], 20, row * 24 + 18);
+		}
+		else
+		{
+			for (col = 0; col < 5; col++)
 			{
-				CheckAndRenderGridSquare(guess[row][col], col, col * 24 + 20, row * 24 + 18);
-			}
-			else
-			{
+				rect.topLeft.x = col * 24 + 20;
+				rect.topLeft.y = row * 24 + 18;
 				WinDrawRectangleFrame(simpleFrame, &rect);
 				if (row == guessRow && col < guessCol)
 				{
@@ -127,20 +159,12 @@ static void RenderBoard()
 
 static void RenderCorrectWord()
 {
-	int i;
-	for (i = 0; i < 5; i++)
-	{
-		CheckAndRenderGridSquare(word[i], i, i * 24 + 20, 70);
-	}
+	CheckAndRenderWord(word, 20, 70);
 }
 
 static void RenderFinalWord()
 {
-	int i;
-	for (i = 0; i < 5; i++)
-	{
-		CheckAndRenderGridSquare(guess[guessRow][i], i, i * 24 + 20, 110);
-	}
+	CheckAndRenderWord(guess[guessRow], 20, 110);
 }
 
 static Boolean WinFormHandleEvent(EventPtr e)
@@ -166,7 +190,6 @@ static Boolean LoseFormHandleEvent(EventPtr e)
 
 static Boolean MainFormHandleEvent(EventPtr e)
 {
-	int i;
 	Boolean handled = false;
 	RectangleType rect;
 	Boolean won;
@@ -190,11 +213,7 @@ static Boolean MainFormHandleEvent(EventPtr e)
 		else if (e->data.keyDown.chr == chrLineFeed &&
 				 guessCol == 5)
 		{
-			won = true;
-			for (i = 0; i < 5; i++)
-			{
-				won &= CheckAndRenderGridSquare(guess[guessRow][i], i, i * 24 + 20, guessRow * 24 + 18);
-			}
+			won = CheckAndRenderWord(guess[guessRow], 20, guessRow * 24 + 18);
 
 			if (won)
 			{
@@ -291,6 +310,7 @@ static void AppInit()
 	table[2].b = 200;
 
 	WinPalette(winPaletteSet, PALETTE_OFFSET, 3, table);
+	WinScreenMode(winScreenModeGet, NULL, NULL, NULL, &enableColor);
 
 	FrmGotoForm(MainForm);
 	nowSeconds = TimGetSeconds();
