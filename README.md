@@ -33,3 +33,6 @@ Here is a list of devices that it has been tested on (Feel free to open a PR if 
 - Tungsten E (5.2.1)
 - Tungsten T3 (5.2.1)
 - T|X (5.4.9)
+
+### Sony
+- CLIÉ NX70V (OS 5.0)
