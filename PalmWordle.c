@@ -13,6 +13,98 @@ int guessRow = 0;
 int guessCol = 0;
 Char guess[6][5];
 Boolean enableColor;
+IndexedColorType letterStatuses[26];
+
+static void DrawKeyboardLetter(Char c, IndexedColorType color, int x, int y)
+{
+	RectangleType rect;
+	FrameType frame = simpleFrame;
+
+	rect.topLeft.x = x;
+	rect.topLeft.y = y;
+	rect.extent.x = 10;
+	rect.extent.y = 10;
+
+	WinDrawChar(c, x + 1, y - 1);
+	if (enableColor)
+	{
+		WinSetForeColor(color);
+		WinDrawRectangleFrame(frame, &rect);
+	}
+	else
+	{
+		if (color == CORRECT_COLOR)
+		{
+			frame = thickFrame;
+			WinDrawRectangleFrame(frame, &rect);
+		}
+		else if (color == INWORD_COLOR)
+		{
+			frame = roundFrame;
+			WinDrawRectangleFrame(frame, &rect);
+		}
+		else if (color == WRONG_COLOR)
+		{
+			WinDrawRectangle(&rect, 0);
+			WinEraseChars(&c, 1, x + 1, y - 1);
+		}
+	}
+}
+
+static void DrawKeyboardUsedChars(int x, int y)
+{
+	const char *topRow = "qwertyuiop";
+	const char *midRow = "asdfghjkl";
+	const char *botRow = "zxcvbnm";
+	int guessNum, colNum, i, letterIndex, letterStatus;
+
+	WinPushDrawState();
+
+	for (guessNum = 0; guessNum < guessRow; guessNum++)
+	{
+		for (colNum = 0; colNum < 5; colNum++)
+		{
+			letterIndex = guess[guessNum][colNum] - 'a';
+			if (guess[guessNum][colNum] == word[colNum])
+			{
+				letterStatuses[letterIndex] = CORRECT_COLOR;
+			}
+			else if (letterStatuses[letterIndex] != CORRECT_COLOR)
+			{
+				letterStatuses[letterIndex] = WRONG_COLOR;
+				for (i = 0; i < 5; i++)
+				{
+					if (guess[guessNum][colNum] == word[i])
+					{
+						letterStatuses[letterIndex] = INWORD_COLOR;
+					}
+				}
+			}
+		}
+	}
+
+	FntSetFont(stdFont);
+
+	for (i = 0; i < StrLen(topRow); i++)
+	{
+		letterStatus = letterStatuses[topRow[i] - 'a'];
+		DrawKeyboardLetter(topRow[i], letterStatus, x + i * 14, y);
+	}
+
+	for (i = 0; i < StrLen(midRow); i++)
+	{
+		letterStatus = letterStatuses[midRow[i] - 'a'];
+		DrawKeyboardLetter(midRow[i], letterStatus, x + 7 + i * 14, y + 14);
+	}
+
+	for (i = 0; i < StrLen(botRow); i++)
+	{
+		letterStatus = letterStatuses[botRow[i] - 'a'];
+		DrawKeyboardLetter(botRow[i], letterStatus, x + 21 + i * 14, y + 28);
+	}
+
+	WinPopDrawState();
+}
 
 static Boolean CheckAndRenderWord(const Char c[5], int x, int y)
 {
@@ -31,6 +123,10 @@ static Boolean CheckAndRenderWord(const Char c[5], int x, int y)
 	rect.topLeft.y = y;
 	rect.extent.x = 20;
 	rect.extent.y = 20;
+
+	WinPushDrawState();
+
+	FntSetFont(largeFont);
 
 	for (i = 0; i < 5; i++)
 	{
@@ -107,10 +203,10 @@ static Boolean CheckAndRenderWord(const Char c[5], int x, int y)
 				WinDrawRectangleFrame(roundFrame, &rect);
 			}
 		}
-		WinPopDrawState();
 		WinDrawChar(c[i] - 0x20, x + i * 24 + 7, y + 2);
 	}
 
+	WinPopDrawState();
 	return won;
 }
 
@@ -247,6 +343,16 @@ static Boolean MainFormHandleEvent(EventPtr e)
 	return handled;
 }
 
+static Boolean KeyboardFormHandleEvent(EventPtr e)
+{
+	Boolean handled = false;
+	if (e->eType == frmOpenEvent)
+	{
+		DrawKeyboardUsedChars(10, 20);
+	}
+	return handled;
+}
+
 static Boolean ApplicationHandleEvent(EventPtr e)
 {
 	short formId;
@@ -268,6 +374,9 @@ static Boolean ApplicationHandleEvent(EventPtr e)
 			break;
 		case LoseForm:
 			FrmSetEventHandler(frm, LoseFormHandleEvent);
+			break;
+		case KeyboardForm:
+			FrmSetEventHandler(frm, KeyboardFormHandleEvent);
 			break;
 		}
 		return true;
@@ -360,6 +469,9 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 			case menuEvent:
 				switch (e.data.menu.itemID)
 				{
+				case Keyboard:
+					FrmGotoForm(KeyboardForm);
+					break;
 				case Quit:
 					goto _quit;
 					break;

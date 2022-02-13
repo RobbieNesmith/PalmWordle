@@ -57,10 +57,19 @@ BEGIN
 	BUTTON "Quit" ID QuitButton AT (CENTER 140 AUTO AUTO)
 END
 
+FORM ID KeyboardForm AT (0 0 160 160)
+USABLE
+MENUID WordleMenu
+BEGIN
+	TITLE "Wordle"
+	BUTTON "OK" ID OkButton AT (CENTER 140 AUTO AUTO)
+END
+
 MENU ID WordleMenu
 BEGIN
   PULLDOWN "Game"
   BEGIN
+	MENUITEM "Show Keyboard" ID Keyboard "K"
     MENUITEM "Quit" ID Quit "Q"
   END
   PULLDOWN "Help"

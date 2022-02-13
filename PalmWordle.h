@@ -3,12 +3,14 @@
 #define HowToForm 1002
 #define WinForm 1003
 #define LoseForm 1004
+#define KeyboardForm 1005
 
 #define OkButton 9000
 #define QuitButton 9001
 
 #define WordleMenu 2000
 #define Quit 2011
+#define Keyboard 2012
 #define About 2021
 #define HowTo 2022
 
