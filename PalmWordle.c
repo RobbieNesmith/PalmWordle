@@ -292,7 +292,7 @@ static Boolean MainFormHandleEvent(EventPtr e)
 			WinEraseRectangle(&rect, 0);
 			handled = true;
 		}
-		else if (e->data.keyDown.chr == chrLineFeed &&
+		else if ((e->data.keyDown.chr == chrLineFeed || e->data.keyDown.chr == vchrRockerCenter || e->data.keyDown.chr == vchrThumbWheelPush) &&
 				 guessCol == 5)
 		{
 			won = CheckAndRenderWord(guess[guessRow], 20, guessRow * 24 + 18);
