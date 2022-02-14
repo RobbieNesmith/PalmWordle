@@ -27,6 +27,20 @@ BEGIN
 	BUTTON "OK" ID OkButton AT (CENTER 140 AUTO AUTO)
 END
 
+FORM ID AboutFormDana AT (0 0 560 160)
+USABLE
+MENUID WordleMenu
+BEGIN
+	TITLE "Wordle"
+	LABEL "Wordle for Palm OS" AUTOID AT (CENTER 24) FONT 2
+	LABEL "By: Bobberto1995" AUTOID AT (CENTER PREVBOTTOM + 4) FONT 0
+	LABEL "Source code and binaries on Github:" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
+	LABEL "https://github.com/RobbieNesmith/PalmWordle" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
+	LABEL "Based on Wordle by Josh Wardle" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
+	LABEL "https://www.powerlanguage.co.uk/wordle/" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
+	BUTTON "OK" ID OkButton AT (CENTER 140 AUTO AUTO)
+END
+
 FORM ID HowToForm AT (0 0 160 160)
 USABLE
 MENUID WordleMenu
@@ -40,6 +54,20 @@ BEGIN
 	LABEL "Use Graffiti or a keyboard to enter" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
 	LABEL "letters and enter, 5-way center" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
 	LABEL "button or press the rocker to guess." AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
+	BUTTON "OK" ID OkButton AT (CENTER 140 AUTO AUTO)
+END
+
+FORM ID HowToFormDana AT (0 0 560 160)
+USABLE
+MENUID WordleMenu
+BEGIN
+	TITLE "Wordle"
+	LABEL "How to play Wordle" AUTOID AT (CENTER 24) FONT 2
+	LABEL "Guess the WORDLE in 6 tries." AUTOID AT (CENTER PREVBOTTOM + 4) FONT 0
+	LABEL "After each guess, the color of the tiles will change" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
+	LABEL "to show how close your guess was to the word." AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
+	LABEL "Use Graffiti or a keyboard to enter letters" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
+	LABEL "and enter, 5-way center button or press the rocker to guess." AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
 	BUTTON "OK" ID OkButton AT (CENTER 140 AUTO AUTO)
 END
 

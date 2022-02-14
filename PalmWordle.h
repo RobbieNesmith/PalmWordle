@@ -3,9 +3,11 @@
 #define HowToForm 1002
 #define WinForm 1003
 #define LoseForm 1004
+#define KeyboardForm 1005
 #define WinFormDana 1006
 #define LoseFormDana 1007
-#define KeyboardForm 1005
+#define AboutFormDana 1008
+#define HowToFormDana 1009
 
 #define OkButton 9000
 #define QuitButton 9001

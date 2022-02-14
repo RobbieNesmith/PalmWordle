@@ -527,10 +527,24 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 					goto _quit;
 					break;
 				case About:
-					FrmGotoForm(AboutForm);
+					if (screenWidth == 560)
+					{
+						FrmGotoForm(AboutFormDana);
+					}
+					else
+					{
+						FrmGotoForm(AboutForm);
+					}
 					break;
 				case HowTo:
-					FrmGotoForm(HowToForm);
+					if (screenWidth == 560)
+					{
+						FrmGotoForm(HowToFormDana);
+					}
+					else
+					{
+						FrmGotoForm(HowToForm);
+					}
 					break;
 				}
 				break;
