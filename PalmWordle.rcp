@@ -1,5 +1,9 @@
 #include "PalmWordle.h"
 
+/* Set bit 0 for wide tall aware. */
+HEX "wTap" ID 1000
+    0x00 0x00 0x00 0x01
+
 FORM ID MainForm AT (0 0 160 160)
 USABLE
 MENUID WordleMenu

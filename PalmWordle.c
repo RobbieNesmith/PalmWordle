@@ -14,6 +14,7 @@ int guessCol = 0;
 Char guess[6][5];
 Boolean enableColor;
 IndexedColorType letterStatuses[26];
+int screenWidth, xOffset;
 
 static void DrawKeyboardLetter(Char c, IndexedColorType color, int x, int y)
 {
@@ -217,22 +218,27 @@ static void RenderBoard()
 	rect.extent.x = 20;
 	rect.extent.y = 20;
 
+	if (screenWidth >= 320)
+	{
+		DrawKeyboardUsedChars(screenWidth / 2 + 10, 20);
+	}
+
 	for (row = 0; row < 6; row++)
 	{
 		if (row < guessRow)
 		{
-			CheckAndRenderWord(guess[row], 20, row * 24 + 18);
+			CheckAndRenderWord(guess[row], xOffset, row * 24 + 18);
 		}
 		else
 		{
 			for (col = 0; col < 5; col++)
 			{
-				rect.topLeft.x = col * 24 + 20;
+				rect.topLeft.x = col * 24 + xOffset;
 				rect.topLeft.y = row * 24 + 18;
 				WinDrawRectangleFrame(simpleFrame, &rect);
 				if (row == guessRow && col < guessCol)
 				{
-					WinDrawChar(guess[row][col] - 0x20, col * 24 + 27, row * 24 + 20);
+					WinDrawChar(guess[row][col] - 0x20, col * 24 + xOffset + 7, row * 24 + 20);
 				}
 			}
 		}
@@ -273,7 +279,7 @@ static Boolean LoseFormHandleEvent(EventPtr e)
 static Boolean MainFormHandleEvent(EventPtr e)
 {
 	Boolean handled = false;
-	RectangleType rect;
+	RectangleType rect, keyboardRect;
 	Boolean won;
 	rect.extent.x = 20;
 	rect.extent.y = 20;
@@ -287,7 +293,7 @@ static Boolean MainFormHandleEvent(EventPtr e)
 			{
 				guessCol--;
 			}
-			rect.topLeft.x = guessCol * 24 + 20;
+			rect.topLeft.x = guessCol * 24 + xOffset;
 			rect.topLeft.y = guessRow * 24 + 18;
 			WinEraseRectangle(&rect, 0);
 			handled = true;
@@ -295,7 +301,7 @@ static Boolean MainFormHandleEvent(EventPtr e)
 		else if ((e->data.keyDown.chr == chrLineFeed || e->data.keyDown.chr == vchrRockerCenter || e->data.keyDown.chr == vchrThumbWheelPush) &&
 				 guessCol == 5)
 		{
-			won = CheckAndRenderWord(guess[guessRow], 20, guessRow * 24 + 18);
+			won = CheckAndRenderWord(guess[guessRow], xOffset, guessRow * 24 + 18);
 
 			if (won)
 			{
@@ -307,6 +313,15 @@ static Boolean MainFormHandleEvent(EventPtr e)
 			{
 				guessRow++;
 				guessCol = 0;
+				if (screenWidth >= 320)
+				{
+					keyboardRect.topLeft.x = screenWidth / 2;
+					keyboardRect.topLeft.y = 20;
+					keyboardRect.extent.x = 160;
+					keyboardRect.extent.y = 80;
+					WinEraseRectangle(&keyboardRect, 0);
+					DrawKeyboardUsedChars(screenWidth / 2 + 10, 20);
+				}
 			}
 			else
 			{
@@ -328,7 +343,7 @@ static Boolean MainFormHandleEvent(EventPtr e)
 				guess[guessRow][guessCol] = e->data.keyDown.chr + 0x20;
 			}
 			FntSetFont(largeFont);
-			WinDrawChar(guess[guessRow][guessCol] - 0x20, guessCol * 24 + 27, guessRow * 24 + 20);
+			WinDrawChar(guess[guessRow][guessCol] - 0x20, guessCol * 24 + xOffset + 7, guessRow * 24 + 20);
 			guessCol++;
 			handled = true;
 		}
@@ -424,6 +439,7 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 	short err;
 	EventType e;
 	FormType *pfrm;
+	RectangleType winRect;
 
 	if (cmd == sysAppLaunchCmdNormalLaunch) // Make sure only react to NormalLaunch, not Reset, Beam, Find, GoTo...
 	{
@@ -462,6 +478,25 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 
 			case frmOpenEvent:
 				pfrm = FrmGetActiveForm();
+
+				// INCREASE THE SIZE OF THE FORM TO MATCH SCREEN SIZE
+				winRect.topLeft.x = 0;
+				winRect.topLeft.y = 0;
+				// get the current screen size
+				WinGetDisplayExtent(&winRect.extent.x, &winRect.extent.y);
+				screenWidth = winRect.extent.x;
+				if (screenWidth >= 320)
+				{
+					xOffset = screenWidth / 2 - 140;
+				}
+				else
+				{
+					xOffset = 20;
+				}
+
+				// change the size of the form to match the screen size
+				WinSetWindowBounds(FrmGetWindowHandle(pfrm), &winRect);
+
 				FrmDrawForm(pfrm);
 				goto _default;
 				break;
