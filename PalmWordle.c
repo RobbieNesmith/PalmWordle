@@ -247,12 +247,12 @@ static void RenderBoard()
 
 static void RenderCorrectWord()
 {
-	CheckAndRenderWord(word, 20, 70);
+	CheckAndRenderWord(word, screenWidth / 2 - 60, 70);
 }
 
 static void RenderFinalWord()
 {
-	CheckAndRenderWord(guess[guessRow], 20, 110);
+	CheckAndRenderWord(guess[guessRow], screenWidth / 2 - 60, 110);
 }
 
 static Boolean WinFormHandleEvent(EventPtr e)
@@ -305,7 +305,14 @@ static Boolean MainFormHandleEvent(EventPtr e)
 
 			if (won)
 			{
-				FrmGotoForm(WinForm);
+				if (screenWidth == 560)
+				{
+					FrmGotoForm(WinFormDana);
+				}
+				else
+				{
+					FrmGotoForm(WinForm);
+				}
 				return true;
 			}
 
@@ -325,7 +332,14 @@ static Boolean MainFormHandleEvent(EventPtr e)
 			}
 			else
 			{
-				FrmGotoForm(LoseForm);
+				if (screenWidth == 560)
+				{
+					FrmGotoForm(LoseFormDana);
+				}
+				else
+				{
+					FrmGotoForm(LoseForm);
+				}
 				return true;
 			}
 			handled = true;
@@ -385,9 +399,11 @@ static Boolean ApplicationHandleEvent(EventPtr e)
 			FrmSetEventHandler(frm, MainFormHandleEvent);
 			break;
 		case WinForm:
+		case WinFormDana:
 			FrmSetEventHandler(frm, WinFormHandleEvent);
 			break;
 		case LoseForm:
+		case LoseFormDana:
 			FrmSetEventHandler(frm, LoseFormHandleEvent);
 			break;
 		case KeyboardForm:
