@@ -1,4 +1,4 @@
-#define NUM_WORDS 2315
+#define NUM_WORDS 2309
 
 const Char wordOrder[NUM_WORDS][5] = {
     "cigar",
@@ -242,11 +242,9 @@ const Char wordOrder[NUM_WORDS][5] = {
     "ultra",
     "robin",
     "cynic",
-    "agora",
     "aroma",
     "caulk",
     "shake",
-    "pupal",
     "dodge",
     "swill",
     "tacit",
@@ -275,7 +273,6 @@ const Char wordOrder[NUM_WORDS][5] = {
     "tease",
     "cater",
     "movie",
-    "lynch",
     "saute",
     "allow",
     "renew",
@@ -296,7 +293,6 @@ const Char wordOrder[NUM_WORDS][5] = {
     "fewer",
     "shawl",
     "natal",
-    "fibre",
     "comma",
     "foray",
     "scare",
@@ -306,7 +302,6 @@ const Char wordOrder[NUM_WORDS][5] = {
     "royal",
     "chunk",
     "mince",
-    "slave",
     "shame",
     "cheek",
     "ample",
@@ -397,7 +392,6 @@ const Char wordOrder[NUM_WORDS][5] = {
     "hydro",
     "flack",
     "agape",
-    "wench",
     "voice",
     "stead",
     "stalk",
