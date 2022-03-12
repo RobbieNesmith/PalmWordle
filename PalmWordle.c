@@ -245,6 +245,33 @@ static void RenderBoard()
 	}
 }
 
+static void RenderNextAndLastGuess(int x, int y)
+{
+	int i;
+	RectangleType rect;
+	rect.extent.x = 20;
+	rect.extent.y = 20;
+	rect.topLeft.y = y;
+
+	for (i = 0; i < 5; i++)
+	{
+		rect.topLeft.x = x + i * 24;
+		rect.topLeft.y = y;
+		WinDrawRectangleFrame(simpleFrame, &rect);
+		rect.topLeft.y = y + 24;
+		WinDrawRectangleFrame(simpleFrame, &rect);
+		if (guessCol > i)
+		{
+			WinDrawChar(guess[guessRow][i] - 0x20, i * 24 + x + 7, y + 26);
+		}
+	}
+
+	if (guessRow > 1)
+	{
+		CheckAndRenderWord(guess[guessRow - 1], screenWidth / 2 - 60, 70);
+	}
+}
+
 static void RenderCorrectWord()
 {
 	CheckAndRenderWord(word, screenWidth / 2 - 60, 70);
@@ -276,91 +303,122 @@ static Boolean LoseFormHandleEvent(EventPtr e)
 	return false;
 }
 
+static Boolean HandleKeyDown(EventPtr e)
+{
+	RectangleType rect, keyboardRect;
+	Boolean won;
+	Boolean handled = false;
+	UInt16 activeFormId = FrmGetActiveFormID();
+
+	rect.extent.x = 20;
+	rect.extent.y = 20;
+
+	if (e->data.keyDown.chr == chrBackspace)
+	{
+		if (guessCol > 0)
+		{
+			guessCol--;
+		}
+		rect.topLeft.x = guessCol * 24 + xOffset;
+		if (activeFormId == MainForm)
+		{
+			rect.topLeft.y = guessRow * 24 + 18;
+		}
+		else
+		{
+			rect.topLeft.y = 44;
+		}
+		WinEraseRectangle(&rect, 0);
+		handled = true;
+	}
+	else if ((e->data.keyDown.chr == chrLineFeed || e->data.keyDown.chr == vchrRockerCenter || e->data.keyDown.chr == vchrThumbWheelPush) &&
+			 guessCol == 5)
+	{
+		if (activeFormId == MainForm)
+		{
+			won = CheckAndRenderWord(guess[guessRow], xOffset, guessRow * 24 + 18);
+		}
+		else
+		{
+			won = CheckAndRenderWord(guess[guessRow], xOffset, 20);
+		}
+
+		if (won)
+		{
+			if (screenWidth == 560)
+			{
+				FrmGotoForm(WinFormDana);
+			}
+			else
+			{
+				FrmGotoForm(WinForm);
+			}
+			return true;
+		}
+
+		if (guessRow < 5 && !won)
+		{
+			guessRow++;
+			guessCol = 0;
+			if (screenWidth >= 320)
+			{
+				keyboardRect.topLeft.x = screenWidth / 2;
+				keyboardRect.topLeft.y = 20;
+				keyboardRect.extent.x = 160;
+				keyboardRect.extent.y = 80;
+				WinEraseRectangle(&keyboardRect, 0);
+				DrawKeyboardUsedChars(screenWidth / 2 + 10, 20);
+			}
+		}
+		else
+		{
+			if (screenWidth == 560)
+			{
+				FrmGotoForm(LoseFormDana);
+			}
+			else
+			{
+				FrmGotoForm(LoseForm);
+			}
+			return true;
+		}
+		handled = true;
+	}
+	else if (((e->data.keyDown.chr >= chrCapital_A && e->data.keyDown.chr <= chrCapital_Z) ||
+			  (e->data.keyDown.chr >= chrSmall_A && e->data.keyDown.chr <= chrSmall_Z)) &&
+			 guessCol < 5)
+	{
+		if (e->data.keyDown.chr > chrCapital_Z)
+		{
+			guess[guessRow][guessCol] = e->data.keyDown.chr;
+		}
+		else
+		{
+			guess[guessRow][guessCol] = e->data.keyDown.chr + 0x20;
+		}
+		FntSetFont(largeFont);
+		if (activeFormId == MainForm)
+		{
+			WinDrawChar(guess[guessRow][guessCol] - 0x20, guessCol * 24 + xOffset + 7, guessRow * 24 + 20);
+		}
+		else
+		{
+			WinDrawChar(guess[guessRow][guessCol] - 0x20, guessCol * 24 + xOffset + 7, 44);
+		}
+		guessCol++;
+		handled = true;
+	}
+	return handled;
+}
+
 static Boolean MainFormHandleEvent(EventPtr e)
 {
 	Boolean handled = false;
-	RectangleType rect, keyboardRect;
-	Boolean won;
-	rect.extent.x = 20;
-	rect.extent.y = 20;
 
 	switch (e->eType)
 	{
 	case keyDownEvent:
-		if (e->data.keyDown.chr == chrBackspace)
-		{
-			if (guessCol > 0)
-			{
-				guessCol--;
-			}
-			rect.topLeft.x = guessCol * 24 + xOffset;
-			rect.topLeft.y = guessRow * 24 + 18;
-			WinEraseRectangle(&rect, 0);
-			handled = true;
-		}
-		else if ((e->data.keyDown.chr == chrLineFeed || e->data.keyDown.chr == vchrRockerCenter || e->data.keyDown.chr == vchrThumbWheelPush) &&
-				 guessCol == 5)
-		{
-			won = CheckAndRenderWord(guess[guessRow], xOffset, guessRow * 24 + 18);
-
-			if (won)
-			{
-				if (screenWidth == 560)
-				{
-					FrmGotoForm(WinFormDana);
-				}
-				else
-				{
-					FrmGotoForm(WinForm);
-				}
-				return true;
-			}
-
-			if (guessRow < 5 && !won)
-			{
-				guessRow++;
-				guessCol = 0;
-				if (screenWidth >= 320)
-				{
-					keyboardRect.topLeft.x = screenWidth / 2;
-					keyboardRect.topLeft.y = 20;
-					keyboardRect.extent.x = 160;
-					keyboardRect.extent.y = 80;
-					WinEraseRectangle(&keyboardRect, 0);
-					DrawKeyboardUsedChars(screenWidth / 2 + 10, 20);
-				}
-			}
-			else
-			{
-				if (screenWidth == 560)
-				{
-					FrmGotoForm(LoseFormDana);
-				}
-				else
-				{
-					FrmGotoForm(LoseForm);
-				}
-				return true;
-			}
-			handled = true;
-		}
-		else if (((e->data.keyDown.chr >= chrCapital_A && e->data.keyDown.chr <= chrCapital_Z) ||
-				  (e->data.keyDown.chr >= chrSmall_A && e->data.keyDown.chr <= chrSmall_Z)) &&
-				 guessCol < 5)
-		{
-			if (e->data.keyDown.chr > chrCapital_Z)
-			{
-				guess[guessRow][guessCol] = e->data.keyDown.chr;
-			}
-			else
-			{
-				guess[guessRow][guessCol] = e->data.keyDown.chr + 0x20;
-			}
-			FntSetFont(largeFont);
-			WinDrawChar(guess[guessRow][guessCol] - 0x20, guessCol * 24 + xOffset + 7, guessRow * 24 + 20);
-			guessCol++;
-			handled = true;
-		}
+		handled = HandleKeyDown(e);
 		break;
 	case frmOpenEvent:
 		RenderBoard();
@@ -377,7 +435,12 @@ static Boolean KeyboardFormHandleEvent(EventPtr e)
 	Boolean handled = false;
 	if (e->eType == frmOpenEvent)
 	{
-		DrawKeyboardUsedChars(10, 20);
+		RenderNextAndLastGuess(xOffset, 20);
+		DrawKeyboardUsedChars(10, 96);
+	}
+	else if (e->eType == keyDownEvent)
+	{
+		handled = HandleKeyDown(e);
 	}
 	return handled;
 }
