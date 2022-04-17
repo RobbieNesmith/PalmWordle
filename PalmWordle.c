@@ -266,9 +266,27 @@ static void RenderNextAndLastGuess(int x, int y)
 		}
 	}
 
-	if (guessRow > 1)
+	if (guessRow > 0)
 	{
-		CheckAndRenderWord(guess[guessRow - 1], screenWidth / 2 - 60, 70);
+		CheckAndRenderWord(guess[guessRow - 1], screenWidth / 2 - 60, y);
+	}
+}
+
+static void ClearWord(int x, int y)
+{
+	int i;
+	RectangleType rect;
+	rect.extent.x = 20;
+	rect.extent.y = 20;
+	rect.topLeft.y = y;
+
+	for (i = 0; i < 5; i++)
+	{
+		rect.topLeft.x = x + i * 24;
+		rect.topLeft.y = y;
+		WinEraseRectangle(&rect, 0);
+		rect.topLeft.y = y + 24;
+		WinEraseRectangle(&rect, 0);
 	}
 }
 
@@ -340,6 +358,8 @@ static Boolean HandleKeyDown(EventPtr e)
 		}
 		else
 		{
+			ClearWord(xOffset, 20);
+			ClearWord(xOffset, 44);
 			won = CheckAndRenderWord(guess[guessRow], xOffset, 20);
 		}
 
@@ -368,6 +388,15 @@ static Boolean HandleKeyDown(EventPtr e)
 				keyboardRect.extent.y = 80;
 				WinEraseRectangle(&keyboardRect, 0);
 				DrawKeyboardUsedChars(screenWidth / 2 + 10, 20);
+			}
+			else if (activeFormId == KeyboardForm)
+			{
+				keyboardRect.topLeft.x = 10;
+				keyboardRect.topLeft.y = 95;
+				keyboardRect.extent.x = 160;
+				keyboardRect.extent.y = 40;
+				WinEraseRectangle(&keyboardRect, 0);
+				DrawKeyboardUsedChars(10, 96);
 			}
 		}
 		else
