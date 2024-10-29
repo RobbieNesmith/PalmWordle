@@ -1,5 +1,7 @@
 # PalmWordle
 
+![Some Palms running PalmWordle](palms.jpg)
+
 ## About
 In a fit of madness, I have ported the web game [WORDLE](https://www.powerlanguage.co.uk/wordle/) by Josh Wardle to Palm OS devices.
 WORDLE is a game where you try to five letter word. After each guess you are told whether your letters are not in the word, in the word but in the wrong place, or in the correct place.
