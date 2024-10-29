@@ -56,3 +56,4 @@ Here is a list of devices that it has been tested on (Feel free to open a PR if 
 ### Sony
 - CLIÉ NX70V (OS 5.0)
 - CLIÉ PEG-SL10/E (OS 4.0)
+- CLIÉ PEG-UX50 (5.2)
