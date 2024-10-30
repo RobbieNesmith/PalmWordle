@@ -107,7 +107,7 @@ static void DrawKeyboardUsedChars(int x, int y)
 	WinPopDrawState();
 }
 
-static Boolean CheckAndRenderWord(const Char word[5], const Char c[5], int x, int y)
+static Boolean CheckAndRenderWord(const Char correct[5], const Char guess[5], int x, int y)
 {
 	Boolean won = true;
 	int i, j, k;
@@ -131,23 +131,23 @@ static Boolean CheckAndRenderWord(const Char word[5], const Char c[5], int x, in
 
 	for (i = 0; i < 5; i++)
 	{
-		if (word[i] != c[i])
+		if (correct[i] != guess[i])
 		{
 			colors[i] = WRONG_COLOR;
 			won = false;
 			for (j = 0; j < 5; j++)
 			{
-				if (word[j] == c[i])
+				if (correct[j] == guess[i])
 				{
 					wordInstances = 0;
 					guessInstances = 0;
 					for (k = 0; k < 5; k++)
 					{
-						if (word[k] == c[i])
+						if (correct[k] == guess[i])
 						{
 							wordInstances++;
 						}
-						if (c[k] == c[i])
+						if (guess[k] == guess[i])
 						{
 							guessInstances++;
 						}
@@ -160,14 +160,14 @@ static Boolean CheckAndRenderWord(const Char word[5], const Char c[5], int x, in
 						{
 							if (k < i)
 							{
-								if (c[k] == c[i] && colors[k] < WRONG_COLOR)
+								if (guess[k] == guess[i] && colors[k] < WRONG_COLOR)
 								{
 									timesBeaten++;
 								}
 							}
 							else if (k > i)
 							{
-								if (c[k] == c[i] && c[k] == word[k])
+								if (guess[k] == guess[i] && guess[k] == correct[k])
 								{
 									timesBeaten++;
 								}
@@ -204,7 +204,7 @@ static Boolean CheckAndRenderWord(const Char word[5], const Char c[5], int x, in
 				WinDrawRectangleFrame(roundFrame, &rect);
 			}
 		}
-		WinDrawChar(c[i] - 0x20, x + i * 24 + 7, y + 2);
+		WinDrawChar(guess[i] - 0x20, x + i * 24 + 7, y + 2);
 	}
 
 	WinPopDrawState();
