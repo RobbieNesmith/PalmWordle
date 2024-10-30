@@ -573,6 +573,19 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 				case OkButton:
 					FrmGotoForm(MainForm);
 					break;
+				case NextButton:
+					FrmGotoForm(HowToForm2);
+					break;
+				case BackButton:
+					if (screenWidth == 560)
+					{
+						FrmGotoForm(HowToFormDana);
+					}
+					else
+					{
+						FrmGotoForm(HowToForm);
+					}
+					break;
 				case QuitButton:
 					goto _quit;
 					break;
