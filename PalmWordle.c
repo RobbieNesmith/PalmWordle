@@ -107,7 +107,7 @@ static void DrawKeyboardUsedChars(int x, int y)
 	WinPopDrawState();
 }
 
-static Boolean CheckAndRenderWord(const Char c[5], int x, int y)
+static Boolean CheckAndRenderWord(const Char word[5], const Char c[5], int x, int y)
 {
 	Boolean won = true;
 	int i, j, k;
@@ -227,7 +227,7 @@ static void RenderBoard()
 	{
 		if (row < guessRow)
 		{
-			CheckAndRenderWord(guess[row], xOffset, row * 24 + 18);
+			CheckAndRenderWord(word, guess[row], xOffset, row * 24 + 18);
 		}
 		else
 		{
@@ -268,7 +268,7 @@ static void RenderNextAndLastGuess(int x, int y)
 
 	if (guessRow > 0)
 	{
-		CheckAndRenderWord(guess[guessRow - 1], screenWidth / 2 - 60, y);
+		CheckAndRenderWord(word, guess[guessRow - 1], screenWidth / 2 - 60, y);
 	}
 }
 
@@ -292,12 +292,12 @@ static void ClearWord(int x, int y)
 
 static void RenderCorrectWord()
 {
-	CheckAndRenderWord(word, screenWidth / 2 - 60, 70);
+	CheckAndRenderWord(word, word, screenWidth / 2 - 60, 70);
 }
 
 static void RenderFinalWord()
 {
-	CheckAndRenderWord(guess[guessRow], screenWidth / 2 - 60, 110);
+	CheckAndRenderWord(word, guess[guessRow], screenWidth / 2 - 60, 110);
 }
 
 static Boolean WinFormHandleEvent(EventPtr e)
@@ -354,13 +354,13 @@ static Boolean HandleKeyDown(EventPtr e)
 	{
 		if (activeFormId == MainForm)
 		{
-			won = CheckAndRenderWord(guess[guessRow], xOffset, guessRow * 24 + 18);
+			won = CheckAndRenderWord(word, guess[guessRow], xOffset, guessRow * 24 + 18);
 		}
 		else
 		{
 			ClearWord(xOffset, 20);
 			ClearWord(xOffset, 44);
-			won = CheckAndRenderWord(guess[guessRow], xOffset, 20);
+			won = CheckAndRenderWord(word, guess[guessRow], xOffset, 20);
 		}
 
 		if (won)
