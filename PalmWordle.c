@@ -474,6 +474,14 @@ static Boolean KeyboardFormHandleEvent(EventPtr e)
 	return handled;
 }
 
+static Boolean HowToForm2HandleEvent(EventPtr e) {
+	if (e->eType == frmOpenEvent)
+	{
+		CheckAndRenderWord("liven", "pilot", screenWidth / 2 - 60, 64);
+	}
+	return false;
+}
+
 static Boolean ApplicationHandleEvent(EventPtr e)
 {
 	short formId;
@@ -500,6 +508,9 @@ static Boolean ApplicationHandleEvent(EventPtr e)
 			break;
 		case KeyboardForm:
 			FrmSetEventHandler(frm, KeyboardFormHandleEvent);
+			break;
+		case HowToForm2:
+			FrmSetEventHandler(frm, HowToForm2HandleEvent);
 			break;
 		}
 		return true;
