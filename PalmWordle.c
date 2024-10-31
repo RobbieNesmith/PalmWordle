@@ -107,7 +107,7 @@ static void DrawKeyboardUsedChars(int x, int y)
 	WinPopDrawState();
 }
 
-static Boolean CheckAndRenderWord(const Char c[5], int x, int y)
+static Boolean CheckAndRenderWord(const Char correct[5], const Char guess[5], int x, int y)
 {
 	Boolean won = true;
 	int i, j, k;
@@ -131,23 +131,23 @@ static Boolean CheckAndRenderWord(const Char c[5], int x, int y)
 
 	for (i = 0; i < 5; i++)
 	{
-		if (word[i] != c[i])
+		if (correct[i] != guess[i])
 		{
 			colors[i] = WRONG_COLOR;
 			won = false;
 			for (j = 0; j < 5; j++)
 			{
-				if (word[j] == c[i])
+				if (correct[j] == guess[i])
 				{
 					wordInstances = 0;
 					guessInstances = 0;
 					for (k = 0; k < 5; k++)
 					{
-						if (word[k] == c[i])
+						if (correct[k] == guess[i])
 						{
 							wordInstances++;
 						}
-						if (c[k] == c[i])
+						if (guess[k] == guess[i])
 						{
 							guessInstances++;
 						}
@@ -160,14 +160,14 @@ static Boolean CheckAndRenderWord(const Char c[5], int x, int y)
 						{
 							if (k < i)
 							{
-								if (c[k] == c[i] && colors[k] < WRONG_COLOR)
+								if (guess[k] == guess[i] && colors[k] < WRONG_COLOR)
 								{
 									timesBeaten++;
 								}
 							}
 							else if (k > i)
 							{
-								if (c[k] == c[i] && c[k] == word[k])
+								if (guess[k] == guess[i] && guess[k] == correct[k])
 								{
 									timesBeaten++;
 								}
@@ -204,7 +204,7 @@ static Boolean CheckAndRenderWord(const Char c[5], int x, int y)
 				WinDrawRectangleFrame(roundFrame, &rect);
 			}
 		}
-		WinDrawChar(c[i] - 0x20, x + i * 24 + 7, y + 2);
+		WinDrawChar(guess[i] - 0x20, x + i * 24 + 7, y + 2);
 	}
 
 	WinPopDrawState();
@@ -227,7 +227,7 @@ static void RenderBoard()
 	{
 		if (row < guessRow)
 		{
-			CheckAndRenderWord(guess[row], xOffset, row * 24 + 18);
+			CheckAndRenderWord(word, guess[row], xOffset, row * 24 + 18);
 		}
 		else
 		{
@@ -268,7 +268,7 @@ static void RenderNextAndLastGuess(int x, int y)
 
 	if (guessRow > 0)
 	{
-		CheckAndRenderWord(guess[guessRow - 1], screenWidth / 2 - 60, y);
+		CheckAndRenderWord(word, guess[guessRow - 1], screenWidth / 2 - 60, y);
 	}
 }
 
@@ -292,12 +292,12 @@ static void ClearWord(int x, int y)
 
 static void RenderCorrectWord()
 {
-	CheckAndRenderWord(word, screenWidth / 2 - 60, 70);
+	CheckAndRenderWord(word, word, screenWidth / 2 - 60, 70);
 }
 
 static void RenderFinalWord()
 {
-	CheckAndRenderWord(guess[guessRow], screenWidth / 2 - 60, 110);
+	CheckAndRenderWord(word, guess[guessRow], screenWidth / 2 - 60, 110);
 }
 
 static Boolean WinFormHandleEvent(EventPtr e)
@@ -354,13 +354,13 @@ static Boolean HandleKeyDown(EventPtr e)
 	{
 		if (activeFormId == MainForm)
 		{
-			won = CheckAndRenderWord(guess[guessRow], xOffset, guessRow * 24 + 18);
+			won = CheckAndRenderWord(word, guess[guessRow], xOffset, guessRow * 24 + 18);
 		}
 		else
 		{
 			ClearWord(xOffset, 20);
 			ClearWord(xOffset, 44);
-			won = CheckAndRenderWord(guess[guessRow], xOffset, 20);
+			won = CheckAndRenderWord(word, guess[guessRow], xOffset, 20);
 		}
 
 		if (won)
@@ -474,6 +474,14 @@ static Boolean KeyboardFormHandleEvent(EventPtr e)
 	return handled;
 }
 
+static Boolean HowToForm2HandleEvent(EventPtr e) {
+	if (e->eType == frmOpenEvent)
+	{
+		CheckAndRenderWord("liven", "pilot", screenWidth / 2 - 60, 64);
+	}
+	return false;
+}
+
 static Boolean ApplicationHandleEvent(EventPtr e)
 {
 	short formId;
@@ -500,6 +508,9 @@ static Boolean ApplicationHandleEvent(EventPtr e)
 			break;
 		case KeyboardForm:
 			FrmSetEventHandler(frm, KeyboardFormHandleEvent);
+			break;
+		case HowToForm2:
+			FrmSetEventHandler(frm, HowToForm2HandleEvent);
 			break;
 		}
 		return true;
@@ -572,6 +583,19 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 				{
 				case OkButton:
 					FrmGotoForm(MainForm);
+					break;
+				case NextButton:
+					FrmGotoForm(HowToForm2);
+					break;
+				case BackButton:
+					if (screenWidth == 560)
+					{
+						FrmGotoForm(HowToFormDana);
+					}
+					else
+					{
+						FrmGotoForm(HowToForm);
+					}
 					break;
 				case QuitButton:
 					goto _quit;

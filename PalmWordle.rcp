@@ -54,7 +54,22 @@ BEGIN
 	LABEL "Use Graffiti or a keyboard to enter" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
 	LABEL "letters and enter, 5-way center" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
 	LABEL "button or press the rocker to guess." AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
-	BUTTON "OK" ID OkButton AT (CENTER 140 AUTO AUTO)
+	BUTTON "OK" ID OkButton AT (RIGHT@78 140 AUTO AUTO)
+	BUTTON "Next" ID NextButton AT (82 140 AUTO AUTO)
+END
+
+FORM ID HowToForm2 AT (0 0 160 160)
+USABLE
+MENUID WordleMenu
+BEGIN
+	TITLE "Wordle"
+	LABEL "How to play Wordle" AUTOID AT (CENTER 24) FONT 2
+	LABEL "Example" AUTOID AT (CENTER PREVBOTTOM + 4) FONT 0
+	LABEL "I is in the word and in the correct spot" AUTOID AT (CENTER PREVBOTTOM + 36)
+	LABEL "L is in the word but in the wrong spot" AUTOID AT (CENTER PREVBOTTOM + 4)
+	LABEL "O is not in the word in any spot" AUTOID AT (CENTER PREVBOTTOM + 4)
+	BUTTON "Back" ID BackButton AT (RIGHT@78 140 AUTO AUTO)
+	BUTTON "OK" ID OkButton AT (82 140 AUTO AUTO)
 END
 
 FORM ID HowToFormDana AT (0 0 560 160)
@@ -68,7 +83,8 @@ BEGIN
 	LABEL "to show how close your guess was to the word." AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
 	LABEL "Use Graffiti or a keyboard to enter letters" AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
 	LABEL "and enter, 5-way center button or press the rocker to guess." AUTOID AT (CENTER PREVBOTTOM + 2) FONT 0
-	BUTTON "OK" ID OkButton AT (CENTER 140 AUTO AUTO)
+	BUTTON "OK" ID OkButton AT (RIGHT@78 140 AUTO AUTO)
+	BUTTON "Next" ID NextButton AT (82 140 AUTO AUTO)
 END
 
 FORM ID WinForm AT (0 0 160 160)
@@ -145,6 +161,6 @@ END
 
 SMALLICON "PalmWordleSmall.bmp"
 
-VERSION 1 "3.0.0"
+VERSION 1 "3.1.0"
 
 LAUNCHERCATEGORY ID 1000 "Games"

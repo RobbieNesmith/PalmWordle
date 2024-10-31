@@ -8,9 +8,12 @@
 #define LoseFormDana 1007
 #define AboutFormDana 1008
 #define HowToFormDana 1009
+#define HowToForm2 1010
 
 #define OkButton 9000
 #define QuitButton 9001
+#define NextButton 9002
+#define BackButton 9003
 
 #define WordleMenu 2000
 #define Quit 2011
